@@ -1,6 +1,62 @@
 spring:
+  application:
+    name: kafka-client
+    threads:
+      virtual:
+        enabled: true  # Enable virtual threads
   kafka:
     producer:
       bootstrap-servers: boot-rzz.exp2.5e7k1c.c4.kafka.ap-northeast-1.amazonaws.com:9092,boot-93g.exp2.5e7k1c.c4.kafka.ap-northeast-1.amazonaws.com:9092,boot-9cf.exp2.5e7k1c.c4.kafka.ap-northeast-1.amazonaws.com:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      transaction-id-prefix: tx-
+      properties:
+        metric-reporter-classes: org.apache.kafka.common.metrics.JmxReporter
+        metrics.recording.level: INFO
+        enable.idempotence: true
+        transactional.id: tx-${random.uuid}
+        # Reliability settings
+        acks: all
+        retries: 3
+        retry.backoff.ms: 1000
+        max.in.flight.requests.per.connection: 1
+        # Transaction timeout
+        transaction.timeout.ms: 60000
+        # Batch settings for better performance
+        # batch.size: 16384
+        linger.ms: 0
+        # buffer.memory: 33554432
+        # compression.type: lz4
+    properties:
+      security:
+        protocol: PLAINTEXT
+
+server:
+  tomcat:
+    threads:
+      max: 3
+      
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    enable:
+      kafka: true
+    tags:
+      application: ${spring.application.name}
+    export:
+      prometheus:
+        enabled: true
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.apache.kafka: INFO
