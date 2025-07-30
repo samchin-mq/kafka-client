@@ -1,13 +1,17 @@
 package org.example.kafka.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.example.kafka.dto.Order;
+import org.example.kafka.dto.OrderShares;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,13 +19,14 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class KafkaProducerService {
 
     // Number of threads in the pool - adjust based on your system resources
     private static final int THREAD_POOL_SIZE = 1_000;
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaTemplate kafkaTemplate;
 
     public String sendMessagesInParallel(String topic, String message, int messageCount) {
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
@@ -70,4 +75,23 @@ public class KafkaProducerService {
             return null;
         });
     }
+    
+    @Transactional
+    public void sendMessage() {
+        Map<String, String> message = new HashMap<>();
+        message.put("key", "message");
+        for (int i = 0; i < 100; i++) {
+            kafkaTemplate.send("topic", message);
+        }
+    }
+    
+    @Transactional
+    public void sendOrder(List<Order> orders) {
+        log.info("sending order");
+        orders.forEach( (order) -> {
+            kafkaTemplate.send("orders", order);
+        });
+    }
+    
+    
 }

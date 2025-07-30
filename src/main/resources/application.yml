@@ -6,9 +6,9 @@ spring:
         enabled: true  # Enable virtual threads
   kafka:
     producer:
-      bootstrap-servers: b-2.samk2.oeo3gv.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-4.samk2.oeo3gv.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-3.samk2.oeo3gv.c4.kafka.ap-northeast-1.amazonaws.com:9092
+      bootstrap-servers: b-1.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-3.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-4.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       transaction-id-prefix: tx-
       properties:
         metric-reporter-classes: org.apache.kafka.common.metrics.JmxReporter
@@ -18,7 +18,7 @@ spring:
         # Reliability settings
         acks: all
         retries: 3
-        retry.backoff.ms: 1000
+        # retry.backoff.ms: 100
         max.in.flight.requests.per.connection: 1
         # Transaction timeout
         transaction.timeout.ms: 60000
@@ -26,7 +26,7 @@ spring:
         # batch.size: 16384
         linger.ms: 5
         # buffer.memory: 33554432
-        # compression.type: lz4
+        compression.type: lz4
     properties:
       security:
         protocol: PLAINTEXT
@@ -34,7 +34,7 @@ spring:
 server:
   tomcat:
     threads:
-      max: 1000
+      max: 100
       
 management:
   endpoints:

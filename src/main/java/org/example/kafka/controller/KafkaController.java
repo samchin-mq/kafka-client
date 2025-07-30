@@ -1,7 +1,10 @@
 package org.example.kafka.controller;
 
+
+import org.example.kafka.dto.Order;
 import org.example.kafka.service.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
+import java.util.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,5 +23,15 @@ public class KafkaController {
     @PostMapping("/send-bulk")
     public String sendBulkMessages(@RequestParam String message) {
         return producerService.sendMessagesInParallel("sam-topic", message, 10_000);
+    }
+    
+    @GetMapping("/send")
+    public void send() {
+        producerService.sendMessage();
+    }
+    
+    @PostMapping("/sendOrder")
+    public void sendOrder(@RequestBody List<Order> orders) {
+        producerService.sendOrder(orders);
     }
 }

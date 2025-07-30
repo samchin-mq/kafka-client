@@ -15,9 +15,11 @@ Happy coding!
 
 # Example: Download Kafka 3.6.1 (adjust version as needed)
 wget https://archive.apache.org/dist/kafka/3.6.1/kafka_2.13-3.6.1.tgz
-export KAFKA_ROOT=$(pwd)/kafka_2.13-3.6.1
 tar -xzf kafka_2.13-3.6.1.tgz
-export BOOTSTRAP_SERVER="b-1.your-cluster.xyz.kafka.your-region.amazonaws.com:9092,b-2.your-cluster.abc.kafka.your-region.amazonaws.com:9092" # Replace with your actual bootstrap brokers
+echo security.protocol=PLAINTEXT > client.properties
+
+export KAFKA_ROOT=$(pwd)/kafka_2.13-3.6.1
+export BOOTSTRAP_SERVER="b-4.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-1.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-2.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092"
 $KAFKA_ROOT/bin/kafka-topics.sh --list --bootstrap-server $BOOTSTRAP_SERVER --command-config client.properties
 sudo yum install -y java-21-amazon-corretto-devel
 sudo yum install -y maven
