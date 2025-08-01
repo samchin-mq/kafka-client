@@ -1,1 +1,1 @@
-curl "http://localhost:8080/actuator/prometheus" >> 1.log
+curl "http://localhost:8080/actuator/prometheus" | grep commit_time >> 1.log

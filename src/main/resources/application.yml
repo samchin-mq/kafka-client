@@ -4,32 +4,32 @@ spring:
     threads:
       virtual:
         enabled: true  # Enable virtual threads
-  kafka:
-    producer:
-      bootstrap-servers: b-1.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-3.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-4.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      transaction-id-prefix: tx-
-      properties:
-        metric-reporter-classes: org.apache.kafka.common.metrics.JmxReporter
-        metrics.recording.level: INFO
-        enable.idempotence: true
-        transactional.id: tx-${random.uuid}
-        # Reliability settings
-        acks: all
-        retries: 3
-        # retry.backoff.ms: 100
-        max.in.flight.requests.per.connection: 1
-        # Transaction timeout
-        transaction.timeout.ms: 60000
-        # Batch settings for better performance
-        # batch.size: 16384
-        linger.ms: 5
-        # buffer.memory: 33554432
-        compression.type: lz4
-    properties:
-      security:
-        protocol: PLAINTEXT
+  # kafka:
+  #   producer:
+  #     bootstrap-servers: b-1.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-3.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-4.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092
+  #     key-serializer: org.apache.kafka.common.serialization.StringSerializer
+  #     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  #     transaction-id-prefix: tx-
+  #     properties:
+  #       metric-reporter-classes: org.apache.kafka.common.metrics.JmxReporter
+  #       metrics.recording.level: INFO
+  #       enable.idempotence: true
+  #       transactional.id: tx-${random.uuid}
+  #       # Reliability settings
+  #       acks: all
+  #       retries: 3
+  #       # retry.backoff.ms: 100
+  #       max.in.flight.requests.per.connection: 1
+  #       # Transaction timeout
+  #       transaction.timeout.ms: 60000
+  #       # Batch settings for better performance
+  #       # batch.size: 16384
+  #       linger.ms: 5
+  #       # buffer.memory: 33554432
+  #       compression.type: lz4
+  #   properties:
+  #     security:
+  #       protocol: PLAINTEXT
 
 server:
   tomcat:

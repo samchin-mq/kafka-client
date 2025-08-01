@@ -20,7 +20,22 @@ echo security.protocol=PLAINTEXT > client.properties
 
 export KAFKA_ROOT=$(pwd)/kafka_2.13-3.6.1
 export BOOTSTRAP_SERVER="b-4.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-1.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-2.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092"
-$KAFKA_ROOT/bin/kafka-topics.sh --list --bootstrap-server $BOOTSTRAP_SERVER --command-config client.properties
+$KAFKA_ROOT/bin/kafka-topics.sh --list --bootstrap-server $BOOTSTRAP_SERVER
 sudo yum install -y java-21-amazon-corretto-devel
 sudo yum install -y maven
 mvn spring-boot:run
+
+
+cd /home/ec2-user/environment/kafka-client; /opt/c9/dependencies/redhat.java@linux-x64/3766f5fd94863af1f93a836b48f61b86550fca34421e1cb7c02cc2994853a1b56bdc5769dfcbb19c20591ed10c7b96e8a98fb5fa30ca65678cb6a415ac3c3f13/jre/17.0.3-linux-x86_64/bin/java -XX:+ShowCodeDetailsInExceptionMessages @/tmp/cp_5h95jyu20on1jyg587urd9cmr.argfile org.example.kafka.util.TestHttpClientString
+
+git config --global user.name "sam.chin"
+git config --global user.email sam.chin@merquri.io
+
+wget https://github.com/aws/aws-msk-iam-auth/releases/download/v2.3.2/aws-msk-iam-auth-2.3.2-all.jar
+export BOOTSTRAP_SERVER=b-3.sam3broker.m24vht.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-2.sam3broker.m24vht.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-1.sam3broker.m24vht.c4.kafka.ap-southeast-1.amazonaws.com:9092
+export BOOTSTRAP_SERVER=boot-1mn.samekafka.1uq8qg.c4.kafka.ap-southeast-1.amazonaws.com:9092,boot-a6k.samekafka.1uq8qg.c4.kafka.ap-southeast-1.amazonaws.com:9092,boot-x1r.samekafka.1uq8qg.c4.kafka.ap-southeast-1.amazonaws.com:9092
+export BOOTSTRAP_SERVER=b-2.sam2zonemsk.iss3jo.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-1.sam2zonemsk.iss3jo.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-3.sam2zonemsk.iss3jo.c4.kafka.ap-southeast-1.amazonaws.com:9092
+$KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --list --command-config client.properties
+$KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --create --topic stringtopicnew2
+$KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --alter --topic stringtopic2 --partitions 12
+$KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --describe --topic stringtopicnew2 --command-config client.properties

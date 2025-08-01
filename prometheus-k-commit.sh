@@ -1,0 +1,1 @@
+curl "http://localhost:8080/actuator/metrics/kafka.producer.txn.commit.time.ns.total" >> kafka_commit.log
