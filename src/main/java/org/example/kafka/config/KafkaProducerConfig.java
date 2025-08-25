@@ -62,7 +62,7 @@ public class KafkaProducerConfig {
     @Bean("stringProducerFactory")
     public ProducerFactory<String, String> stringProducerFactory(MeterRegistry meterRegistry) {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "boot-1mn.samekafka.1uq8qg.c4.kafka.ap-southeast-1.amazonaws.com:9092,boot-a6k.samekafka.1uq8qg.c4.kafka.ap-southeast-1.amazonaws.com:9092,boot-x1r.samekafka.1uq8qg.c4.kafka.ap-southeast-1.amazonaws.com:9092");
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "b-2.sammsk1.4efuic.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-3.sammsk1.4efuic.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-1.sammsk1.4efuic.c4.kafka.ap-northeast-1.amazonaws.com:9092");
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "stx-");

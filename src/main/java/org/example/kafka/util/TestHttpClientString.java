@@ -6,19 +6,21 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class TestHttpClientString {
     private static final String TARGET_URL = "http://localhost:8080/api/kafka/sendString";
-    private static final int THREAD_POOL_SIZE = 1000;
-    private static final int TEST_DURATION_SECONDS = 10;
+    private static final int THREAD_POOL_SIZE = 200;
+    private static final int TEST_DURATION_SECONDS = 60;
 
     private final HttpClient httpClient;
     private final AtomicInteger successCount = new AtomicInteger(0);
     private final AtomicInteger errorCount = new AtomicInteger(0);
+    private final AtomicLong longestElapsed = new AtomicLong(0L);
 
     public TestHttpClientString() {
         this.httpClient = HttpClient.newBuilder()
@@ -27,21 +29,57 @@ public class TestHttpClientString {
     }
 
     public void startLoadTest() {
-        ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-        System.out.println("Starting load test...");
+        try (ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE)) {
+            List<Future<Boolean>> futures = new ArrayList<>();
+            System.out.println("Starting load test...");
 
-        long startTime = System.currentTimeMillis();
-        long endTime = startTime + (TEST_DURATION_SECONDS * 1000);
+            long startTime = System.currentTimeMillis();
+            long endTime = startTime + (TEST_DURATION_SECONDS * 1000);
 
-        while (System.currentTimeMillis() < endTime) {
-            executor.submit(this::makeRequest);
+            while (System.currentTimeMillis() < endTime) {
+                Future<Boolean> future = executor.submit(this::makeRequest);
+                futures.add(future);
+            }
+
+            // Loop to check if all tasks are done
+            boolean allDone = false;
+            while (!allDone) {
+                allDone = true;
+                for (Future<?> future : futures) {
+                    if (!future.isDone()) {
+                        allDone = false;
+                        break;
+                    }
+                }
+                if (!allDone) {
+                    try {
+                        System.out.println("Not all tasks are done yet. Waiting...");
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+
+            System.out.println("All tasks are done! Retrieving results...");
+
+            for (Future<Boolean> future : futures) {
+                try {
+                    System.out.println(future.get());
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+            executor.shutdown();
         }
 
-        shutdownExecutor(executor);
+//        shutdownExecutor(executor);
         printResults();
     }
 
-    private void makeRequest() {
+
+    private boolean makeRequest() {
+        Instant start = Instant.now();
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(TARGET_URL))
@@ -59,6 +97,10 @@ public class TestHttpClientString {
         } catch (Exception e) {
             errorCount.incrementAndGet();
         }
+        Instant end = Instant.now();
+        Duration duration = Duration.between(start, end);
+        longestElapsed.accumulateAndGet(duration.toNanos(), Math::max);
+        return true;
     }
 
     private void shutdownExecutor(ExecutorService executor) {
@@ -91,7 +133,6 @@ public class TestHttpClientString {
         System.out.println("Execution time (milliseconds): " + duration.toMillis());
         System.out.println("Execution time (seconds): " + duration.getSeconds());
         System.out.println("Execution time (nanoseconds): " + duration.toNanos());
-        System.out.println("express mode");
     }
 }
 

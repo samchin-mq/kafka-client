@@ -34,7 +34,7 @@ spring:
 server:
   tomcat:
     threads:
-      max: 100
+      max: 200
       
 management:
   endpoints:
