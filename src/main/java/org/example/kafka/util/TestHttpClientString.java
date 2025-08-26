@@ -100,7 +100,7 @@ public class TestHttpClientString {
         }
         Instant end = Instant.now();
         Duration duration = Duration.between(start, end);
-        longestElapsed.accumulateAndGet(duration.toNanos(), Math::max);
+        longestElapsed.accumulateAndGet(duration.toMillis(), Math::max);
         return true;
     }
 
@@ -121,6 +121,7 @@ public class TestHttpClientString {
         System.out.println("Successful requests: " + successCount.get());
         System.out.println("Failed requests: " + errorCount.get());
         System.out.println("Total requests: " + (successCount.get() + errorCount.get()));
+        System.out.println("Longest: " + longestElapsed.get());
     }
 
     public static void main(String[] args) {
