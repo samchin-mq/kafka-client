@@ -28,21 +28,22 @@ public class TestHttpClientString {
                 .build();
     }
 
-    public void startLoadTest() {
+    public void startLoadTest(Integer num) {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             List<Future<Boolean>> futures = new ArrayList<>();
             System.out.println("Starting load test...");
 
             long startTime = System.currentTimeMillis();
             long endTime = startTime + (TEST_DURATION_SECONDS * 1000);
-
-            while (System.currentTimeMillis() < endTime) {
+            for (int i = 0; i < num; i++) {
+//            while (System.currentTimeMillis() < endTime) {
                 Future<Boolean> future = executor.submit(this::makeRequest);
                 futures.add(future);
             }
 
             // Loop to check if all tasks are done
             boolean allDone = false;
+            System.out.println("futures size " + futures.size());
             while (!allDone) {
                 allDone = true;
                 for (Future<?> future : futures) {
@@ -123,9 +124,14 @@ public class TestHttpClientString {
     }
 
     public static void main(String[] args) {
+        int num = 1000;
+        if (args.length > 0) {
+            num = Integer.parseInt(args[0]);
+        }
+
         Instant start = Instant.now();
         TestHttpClientString loadTester = new TestHttpClientString();
-        loadTester.startLoadTest();
+        loadTester.startLoadTest(num);
         Instant end = Instant.now();
 
         Duration duration = Duration.between(start, end);
