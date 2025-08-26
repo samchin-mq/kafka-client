@@ -64,13 +64,13 @@ public class TestHttpClientString {
 
             System.out.println("All tasks are done! Retrieving results...");
 
-            for (Future<Boolean> future : futures) {
-                try {
-                    System.out.println(future.get());
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
+//            for (Future<Boolean> future : futures) {
+//                try {
+//                    System.out.println(future.get());
+//                } catch (InterruptedException | ExecutionException e) {
+//                    e.printStackTrace();
+//                }
+//            }
             executor.shutdown();
         }
 
