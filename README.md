@@ -19,12 +19,19 @@ tar -xzf kafka_2.13-3.6.1.tgz
 echo security.protocol=PLAINTEXT > client.properties
 
 export KAFKA_ROOT=$(pwd)/kafka_2.13-3.6.1
-export BOOTSTRAP_SERVER="b-4.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-1.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-2.samtest.ih30id.c4.kafka.ap-southeast-1.amazonaws.com:9092"
+export BOOTSTRAP_SERVER="b-1.sammsk3.0q3vg2.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-2.sammsk3.0q3vg2.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-3.sammsk3.0q3vg2.c4.kafka.ap-northeast-1.amazonaws.com:9092"
 $KAFKA_ROOT/bin/kafka-topics.sh --list --bootstrap-server $BOOTSTRAP_SERVER
 sudo yum install -y java-21-amazon-corretto-devel
+sudo update-alternatives --config java
+wget https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz
+sudo tar xvf apache-maven-3.9.11-bin.tar.gz -C /opt
+sudo ln -s /opt/apache-maven-3.9.11 /opt/maven
+export M2_HOME=/opt/maven
+export PATH=${M2_HOME}/bin:${PATH}
 sudo yum install -y maven
-mvn spring-boot:run
 
+mvn spring-boot:run
+java -classpath ./target/classes org.example.kafka.util.TestHttpClientString
 
 cd /home/ec2-user/environment/kafka-client; /opt/c9/dependencies/redhat.java@linux-x64/3766f5fd94863af1f93a836b48f61b86550fca34421e1cb7c02cc2994853a1b56bdc5769dfcbb19c20591ed10c7b96e8a98fb5fa30ca65678cb6a415ac3c3f13/jre/17.0.3-linux-x86_64/bin/java -XX:+ShowCodeDetailsInExceptionMessages @/tmp/cp_5h95jyu20on1jyg587urd9cmr.argfile org.example.kafka.util.TestHttpClientString
 

@@ -29,7 +29,7 @@ public class TestHttpClientString {
     }
 
     public void startLoadTest() {
-        try (ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE)) {
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             List<Future<Boolean>> futures = new ArrayList<>();
             System.out.println("Starting load test...");
 
