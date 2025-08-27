@@ -37,3 +37,8 @@ build/
 ### Mac OS ###
 .DS_Store
 /.idea/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

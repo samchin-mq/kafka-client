@@ -1,0 +1,1 @@
+web: java -jar target/kafka-client-1.0-SNAPSHOT.jar

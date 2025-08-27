@@ -35,7 +35,10 @@ server:
   tomcat:
     threads:
       max: 200
-      
+  port: 5000
+
+kafkaAddress: b-3.sammsk.53hkxr.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-2.sammsk.53hkxr.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-1.sammsk.53hkxr.c4.kafka.ap-northeast-1.amazonaws.com:9092
+
 management:
   endpoints:
     web:
@@ -60,3 +63,4 @@ management:
 logging:
   level:
     org.apache.kafka: INFO
+
