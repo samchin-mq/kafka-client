@@ -5,6 +5,7 @@ import org.apache.kafka.clients.producer.RoundRobinPartitioner;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -18,9 +19,13 @@ import io.micrometer.core.instrument.MeterRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Configuration
 public class KafkaProducerConfig {
+
+    @Value("${kafkaAddress}")
+    String kafkaAddress;
     
     @Bean("producerFactory")
     @Primary
@@ -62,14 +67,15 @@ public class KafkaProducerConfig {
     @Bean("stringProducerFactory")
     public ProducerFactory<String, String> stringProducerFactory(MeterRegistry meterRegistry) {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "b-2.sammsk1.4efuic.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-3.sammsk1.4efuic.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-1.sammsk1.4efuic.c4.kafka.ap-northeast-1.amazonaws.com:9092");
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "stx-");
+        configProps.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, UUID.randomUUID()+"tx-");
         configProps.put(ProducerConfig.METRIC_REPORTER_CLASSES_CONFIG, "org.apache.kafka.common.metrics.JmxReporter");
         configProps.put(ProducerConfig.METRICS_RECORDING_LEVEL_CONFIG, "INFO");
+        configProps.put(ProducerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG, "-1");
         // configProps.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1");
-        configProps.put(ProducerConfig.CLIENT_ID_CONFIG, "stx-client-");
+//        configProps.put(ProducerConfig.CLIENT_ID_CONFIG, "stx-client-");
         // configProps.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, RoundRobinPartitioner.class.getName());
         // configProps.put(ProducerConfig.LINGER_MS_CONFIG, "0");
         // configProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "lz4");

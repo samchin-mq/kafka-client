@@ -37,24 +37,24 @@ public class KafkaProducerService {
     Map<String, Integer> threadRate = new ConcurrentHashMap<>();
     Map<String, Integer> producerRate = new ConcurrentHashMap<>();
     
-    @PostConstruct
-    void init() {
-        ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-        for (int i = 0; i < THREAD_POOL_SIZE; i++) {
-            try {
-                stringTopicQueue.put(i);
-                stringTopic2Queue.put(i);
-                stringTopic3Queue.put(i);
-                recordsPerCall.put(i, new AtomicInteger(0));
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            executor.submit(() -> sendMessage2("", ""));
-        
-        }
-        
-    }
+//    @PostConstruct
+//    void init() {
+//        ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+//        for (int i = 0; i < THREAD_POOL_SIZE; i++) {
+//            try {
+//                stringTopicQueue.put(i);
+//                stringTopic2Queue.put(i);
+//                stringTopic3Queue.put(i);
+//                recordsPerCall.put(i, new AtomicInteger(0));
+//            } catch (InterruptedException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//            executor.submit(() -> sendMessage2("", ""));
+//
+//        }
+//
+//    }
 
     @Autowired
     @Qualifier("kafkaTemplate")
@@ -126,10 +126,36 @@ public class KafkaProducerService {
     
     @Transactional(transactionManager = "stringKafkaTransactionManager")
     public void sendStringMessage() {
+        String data = """
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                abcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyzabcdefghijklmnoprstuvwxyz
+                """;
         // try {
             // int partition = stringTopicQueue.poll(10, TimeUnit.SECONDS);
             for (int i = 0; i < 100; i++) {
-                stringKafkaTemplate.send("stringtopic",  "abc");
+                stringKafkaTemplate.send("stringtopic",  data);
             }
             // stringTopicQueue.put(partition);
         // } catch (InterruptedException e) {

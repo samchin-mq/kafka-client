@@ -44,5 +44,7 @@ export BOOTSTRAP_SERVER=boot-1mn.samekafka.1uq8qg.c4.kafka.ap-southeast-1.amazon
 export BOOTSTRAP_SERVER=b-2.sam2zonemsk.iss3jo.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-1.sam2zonemsk.iss3jo.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-3.sam2zonemsk.iss3jo.c4.kafka.ap-southeast-1.amazonaws.com:9092
 $KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --list --command-config client.properties
 $KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --create --topic stringtopicnew2
-$KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --alter --topic stringtopic2 --partitions 12
-$KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --describe --topic stringtopicnew2 --command-config client.properties
+$KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --alter --topic stringtopic1 --partitions 12
+$KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --describe --topic stringtopic --command-config client.properties
+$KAFKA_ROOT/bin/kafka-reassign-partitions.sh --bootstrap-server $BOOTSTRAP_SERVER --generate --topics-to-move-json-file move-topic.json --broker-list "1,2,3,4,5,6"
+$KAFKA_ROOT/bin/kafka-reassign-partitions.sh --bootstrap-server $BOOTSTRAP_SERVER --execute --reassignment-json-file new-stringtopic.json
