@@ -5,19 +5,25 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class TestHttpClient {
-    private static final String TARGET_URL = "http://localhost:8080/api/kafka/send";
-    private static final int THREAD_POOL_SIZE = 1000;
+    private static final String TARGET_URL = "http://kafka-client4.eba-snmquqtg.ap-northeast-1.elasticbeanstalk.com/api/kafka/send";
+    private static final int THREAD_POOL_SIZE = 200;
     private static final int TEST_DURATION_SECONDS = 60;
 
     private final HttpClient httpClient;
     private final AtomicInteger successCount = new AtomicInteger(0);
     private final AtomicInteger errorCount = new AtomicInteger(0);
+    private final AtomicLong longestElapsed = new AtomicLong(0L);
 
     public TestHttpClient() {
         this.httpClient = HttpClient.newBuilder()
@@ -25,22 +31,59 @@ public class TestHttpClient {
                 .build();
     }
 
-    public void startLoadTest() {
-        ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-        System.out.println("Starting load test...");
+    public void startLoadTest(Integer num) {
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            List<Future<Boolean>> futures = new ArrayList<>();
+            System.out.println("Starting load test...");
 
-        long startTime = System.currentTimeMillis();
-        long endTime = startTime + (TEST_DURATION_SECONDS * 1000);
+            long startTime = System.currentTimeMillis();
+            long endTime = startTime + (TEST_DURATION_SECONDS * 1000);
+            for (int i = 0; i < num; i++) {
+//            while (System.currentTimeMillis() < endTime) {
+                Future<Boolean> future = executor.submit(this::makeRequest);
+                futures.add(future);
+            }
 
-        while (System.currentTimeMillis() < endTime) {
-            executor.submit(this::makeRequest);
+            // Loop to check if all tasks are done
+            boolean allDone = false;
+            System.out.println("futures size " + futures.size());
+            while (!allDone) {
+                allDone = true;
+                for (Future<?> future : futures) {
+                    if (!future.isDone()) {
+                        allDone = false;
+                        break;
+                    }
+                }
+                if (!allDone) {
+                    try {
+                        System.out.println("Not all tasks are done yet. Waiting...");
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+
+            System.out.println("All tasks are done! Retrieving results...");
+
+//            for (Future<Boolean> future : futures) {
+//                try {
+//                    System.out.println(future.get());
+//                } catch (InterruptedException | ExecutionException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+            executor.shutdown();
         }
 
-        shutdownExecutor(executor);
+//        shutdownExecutor(executor);
         printResults();
     }
 
-    private void makeRequest() {
+
+    private boolean makeRequest() {
+        Instant start = Instant.now();
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(TARGET_URL))
@@ -58,6 +101,10 @@ public class TestHttpClient {
         } catch (Exception e) {
             errorCount.incrementAndGet();
         }
+        Instant end = Instant.now();
+        Duration duration = Duration.between(start, end);
+        longestElapsed.accumulateAndGet(duration.toMillis(), Math::max);
+        return true;
     }
 
     private void shutdownExecutor(ExecutorService executor) {
@@ -77,11 +124,25 @@ public class TestHttpClient {
         System.out.println("Successful requests: " + successCount.get());
         System.out.println("Failed requests: " + errorCount.get());
         System.out.println("Total requests: " + (successCount.get() + errorCount.get()));
+        System.out.println("Longest: " + longestElapsed.get());
     }
 
     public static void main(String[] args) {
+        int num = 1000;
+        if (args.length > 0) {
+            num = Integer.parseInt(args[0]);
+        }
+
+        Instant start = Instant.now();
         TestHttpClient loadTester = new TestHttpClient();
-        loadTester.startLoadTest();
+        loadTester.startLoadTest(num);
+        Instant end = Instant.now();
+
+        Duration duration = Duration.between(start, end);
+
+        System.out.println("Execution time (milliseconds): " + duration.toMillis());
+        System.out.println("Execution time (seconds): " + duration.getSeconds());
+        System.out.println("Execution time (nanoseconds): " + duration.toNanos());
     }
 }
 

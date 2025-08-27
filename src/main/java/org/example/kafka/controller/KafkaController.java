@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.*;
 import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.time.Duration;
-import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/kafka")
@@ -24,11 +22,7 @@ public class KafkaController {
         producerService.sendMessage2("sam-topic", message);
         return "Message sent successfully";
     }
-    
-    @PostMapping("/send-bulk")
-    public String sendBulkMessages(@RequestParam String message) {
-        return producerService.sendMessagesInParallel("sam-topic", message, 10_000);
-    }
+
     
     @GetMapping("/send")
     public void send() {
@@ -38,26 +32,6 @@ public class KafkaController {
     @GetMapping("/sendString")
     public void sendString() {
         producerService.sendStringMessage();
-    }
-    
-    @PostMapping("/sendOrder")
-    public void sendOrder(@RequestBody List<Order> orders) {
-        producerService.sendOrder(orders);
-    }
-    
-    @GetMapping("/sendString2")
-    public void sendString2() {
-        producerService.sendStringMessage2();
-    }
-    
-    @GetMapping("/sendString3")
-    public void sendString3() {
-        count.incrementAndGet();
-        Instant start = Instant.now();
-        producerService.sendStringMessage3();
-        Instant end = Instant.now();
-        Duration duration = Duration.between(start, end);
-        executionTotal.accumulateAndGet(duration.toMillis(), Long::sum);
     }
     
     @GetMapping("/stat")
