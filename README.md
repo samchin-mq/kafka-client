@@ -19,7 +19,7 @@ tar -xzf kafka_2.13-3.6.1.tgz
 echo security.protocol=PLAINTEXT > client.properties
 
 export KAFKA_ROOT=$(pwd)/kafka_2.13-3.6.1
-export BOOTSTRAP_SERVER="b-1.sammsk3.0q3vg2.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-2.sammsk3.0q3vg2.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-3.sammsk3.0q3vg2.c4.kafka.ap-northeast-1.amazonaws.com:9092"
+export BOOTSTRAP_SERVER="b-1.sammsk.53hkxr.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-2.sammsk.53hkxr.c4.kafka.ap-northeast-1.amazonaws.com:9092,b-3.sammsk.53hkxr.c4.kafka.ap-northeast-1.amazonaws.com:9092"
 $KAFKA_ROOT/bin/kafka-topics.sh --list --bootstrap-server $BOOTSTRAP_SERVER
 sudo yum install -y java-21-amazon-corretto-devel
 sudo update-alternatives --config java
@@ -44,7 +44,10 @@ export BOOTSTRAP_SERVER=boot-1mn.samekafka.1uq8qg.c4.kafka.ap-southeast-1.amazon
 export BOOTSTRAP_SERVER=b-2.sam2zonemsk.iss3jo.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-1.sam2zonemsk.iss3jo.c4.kafka.ap-southeast-1.amazonaws.com:9092,b-3.sam2zonemsk.iss3jo.c4.kafka.ap-southeast-1.amazonaws.com:9092
 $KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --list --command-config client.properties
 $KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --create --topic stringtopicnew2
-$KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --alter --topic stringtopic1 --partitions 12
+$KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --alter --topic stringtopic --partitions 12
 $KAFKA_ROOT/bin/kafka-topics.sh --bootstrap-server $BOOTSTRAP_SERVER --describe --topic stringtopic --command-config client.properties
 $KAFKA_ROOT/bin/kafka-reassign-partitions.sh --bootstrap-server $BOOTSTRAP_SERVER --generate --topics-to-move-json-file move-topic.json --broker-list "1,2,3,4,5,6"
 $KAFKA_ROOT/bin/kafka-reassign-partitions.sh --bootstrap-server $BOOTSTRAP_SERVER --execute --reassignment-json-file new-stringtopic.json
+
+eb init
+eb create kafka-client

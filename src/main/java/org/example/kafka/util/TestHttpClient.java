@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class TestHttpClient {
-    private static final String TARGET_URL = "http://kafka-client4.eba-snmquqtg.ap-northeast-1.elasticbeanstalk.com/api/kafka/send";
+    private static final String TARGET_URL = "http://kafkac.eba-3hazt3pf.ap-northeast-1.elasticbeanstalk.com/api/kafka/send";
     private static final int THREAD_POOL_SIZE = 200;
     private static final int TEST_DURATION_SECONDS = 60;
 
